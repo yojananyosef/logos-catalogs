@@ -1,0 +1,432 @@
+{
+  "format": "amf-catalog",
+  "version": "0.1.0",
+  "contractMajor": 1,
+  "generatedFor": "Chile, Spain, EU (life+70)",
+  "note": "Every entry is validated by tool/validate_catalog.dart. The Biblia Platense is present with a release date of 2027-01-01; builds before that date are blocked by the gate rather than silently shipping it.",
+  "modules": [
+    {
+      "id": "WEB",
+      "type": "bible",
+      "name": "World English Bible",
+      "shortName": "WEB",
+      "language": "en",
+      "version": "1.0.0",
+      "publisher": "eBible.org",
+      "sha256": "PLACEHOLDER_WEB",
+      "sizeBytes": 0,
+      "downloadUrl": "https://raw.githubusercontent.com/yojananyosef/aletheia-catalog/v1.3.0/dist/WEB.amod",
+      "granularity": "verse",
+      "license": {
+        "id": "PublicDomain",
+        "attribution": "World English Bible (1997-2024), public domain. The name \"World English Bible\" is a trademark and is not used as a product name.",
+        "sourceUrl": "https://ebible.org/eng-web/copyright.htm",
+        "releaseDate": "1970-01-01",
+        "jurisdictions": [],
+        "basis": "Explicitly dedicated to the public domain by its editor. Trademark on the name is disclaimed in the attribution."
+      }
+    },
+    {
+      "id": "KJV",
+      "type": "bible",
+      "name": "King James Version",
+      "shortName": "KJV",
+      "language": "en",
+      "version": "1.0.0",
+      "publisher": "CrossWire Bible Society",
+      "sha256": "PLACEHOLDER_KJV",
+      "sizeBytes": 0,
+      "downloadUrl": "https://raw.githubusercontent.com/yojananyosef/aletheia-catalog/v1.3.0/dist/KJV.amod",
+      "granularity": "verse",
+      "license": {
+        "id": "PublicDomain",
+        "attribution": "",
+        "sourceUrl": "https://crosswire.org/sword/modules/ModInfo.jsp?modName=KJV",
+        "releaseDate": "1970-01-01",
+        "jurisdictions": [],
+        "basis": "Published 1611/1769; public domain by age in every life+70 jurisdiction and pre-1931 in the US. Note the ABS KJV concordance is separately copyrighted; only the Bible text is used here."
+      }
+    },
+    {
+      "id": "CALVIN",
+      "type": "commentary",
+      "name": "Calvin's Commentaries on the Bible",
+      "shortName": "Calvin",
+      "language": "en",
+      "version": "1.0.0",
+      "publisher": "Calvin Translation Society, Edinburgh",
+      "sha256": "PLACEHOLDER_CALVIN",
+      "sizeBytes": 0,
+      "downloadUrl": "https://crosswire.org/ftpmirror/pub/sword/packages/rawzip/CalvinCommentaries.zip",
+      "granularity": "verse",
+      "genre": "critical",
+      "license": {
+        "id": "PublicDomain",
+        "attribution": "John Calvin, Commentaries, Calvin Translation Society translation (Edinburgh, 1843-1857).",
+        "sourceUrl": "https://www.ccel.org/ccel/calvin/commentaries",
+        "releaseDate": "1970-01-01",
+        "jurisdictions": [],
+        "basis": "Published 1843-1857, pre-1931 in the US; every named translator died in the 19th century, so life+70 has expired. Covers the same 48 books Calvin actually wrote on."
+      }
+    },
+    {
+      "id": "KD",
+      "type": "commentary",
+      "name": "Keil and Delitzsch on the Old Testament",
+      "shortName": "KD",
+      "language": "en",
+      "version": "1.0.0",
+      "publisher": "T. & T. Clark, Edinburgh",
+      "sha256": "PLACEHOLDER_KD",
+      "sizeBytes": 0,
+      "downloadUrl": "https://crosswire.org/ftpmirror/pub/sword/packages/rawzip/KD.zip",
+      "granularity": "chapter",
+      "genre": "critical",
+      "license": {
+        "id": "PublicDomain",
+        "attribution": "C. F. Keil and F. Delitzsch, Commentary on the Old Testament, translated by James Martin (1864-1891).",
+        "sourceUrl": "https://en.wikisource.org/wiki/Keil_and_Delitzsch_on_the_Old_Testament",
+        "releaseDate": "1970-01-01",
+        "jurisdictions": [],
+        "basis": "Published 1864-1891; Keil d.1888, Delitzsch d.1890, life+70 long expired. Last great Old Critical commentary before Wellhausen."
+      }
+    },
+    {
+      "id": "BARNES",
+      "type": "commentary",
+      "name": "Barnes' Notes on the New Testament",
+      "shortName": "Barnes",
+      "language": "en",
+      "version": "1.0.0",
+      "publisher": "Presbyterian Board",
+      "sha256": "PLACEHOLDER_BARNES",
+      "sizeBytes": 0,
+      "downloadUrl": "https://crosswire.org/ftpmirror/pub/sword/packages/rawzip/Barnes.zip",
+      "granularity": "chapter",
+      "genre": "expository",
+      "license": {
+        "id": "PublicDomain",
+        "attribution": "Albert Barnes, Notes on the Bible (1832-1834). New Testament only.",
+        "sourceUrl": "https://crosswire.org/sword/modules/ModInfo.jsp?modName=Barnes",
+        "releaseDate": "1970-01-01",
+        "jurisdictions": [],
+        "basis": "Published 1832-1834; Barnes d.1870, life+70 expired. Genuinely exegetical-analytical. The SWORD module is chapter-blocked, so verse notes are recovered by splitting the inline verse markers."
+      }
+    },
+    {
+      "id": "CLARKE",
+      "type": "commentary",
+      "name": "Adam Clarke's Commentary on the Bible",
+      "shortName": "Clarke",
+      "language": "en",
+      "version": "1.0.0",
+      "publisher": "CrossWire Bible Society",
+      "sha256": "PLACEHOLDER_CLARKE",
+      "sizeBytes": 0,
+      "downloadUrl": "https://crosswire.org/ftpmirror/pub/sword/packages/rawzip/Clarke.zip",
+      "granularity": "chapter",
+      "genre": "critical",
+      "license": {
+        "id": "PublicDomain",
+        "attribution": "Adam Clarke, Commentary on the Old and New Testaments (1831-1834).",
+        "sourceUrl": "https://en.wikisource.org/wiki/Adam_Clarke%27s_commentary_on_the_Bible",
+        "releaseDate": "1970-01-01",
+        "jurisdictions": [],
+        "basis": "Published 1831-1834; Clarke d.1832. Carries a real critical apparatus with variant readings and the original languages. Doctrinal notes are Wesleyan and are flagged as such in the UI."
+      }
+    },
+    {
+      "id": "JFB",
+      "type": "commentary",
+      "name": "Jamieson, Fausset and Brown Commentary",
+      "shortName": "JFB",
+      "language": "en",
+      "version": "1.0.0",
+      "publisher": "CrossWire Bible Society",
+      "sha256": "PLACEHOLDER_JFB",
+      "sizeBytes": 0,
+      "downloadUrl": "https://raw.githubusercontent.com/yojananyosef/aletheia-catalog/v1.3.0/dist/JFB.amod",
+      "granularity": "verse",
+      "genre": "expository",
+      "license": {
+        "id": "PublicDomain",
+        "attribution": "Robert Jamieson, A. R. Fausset and David Brown, Commentary Critical and Explanatory (1871-1878).",
+        "sourceUrl": "https://www.ccel.org/",
+        "releaseDate": "1970-01-01",
+        "jurisdictions": [],
+        "basis": "Published 1871-1878; all three authors pre-1931. Authorship is uneven — Fausset wrote 44 of the books and is the strongest; Brown is the weakest."
+      }
+    },
+    {
+      "id": "STRONGS1890",
+      "type": "lexicon",
+      "name": "Strong's Exhaustive Concordance (1890)",
+      "shortName": "Strong's",
+      "language": "en",
+      "version": "1.0.0",
+      "publisher": "Abingdon Press",
+      "sha256": "PLACEHOLDER_STRONGS",
+      "sizeBytes": 0,
+      "downloadUrl": "https://archive.org/details/exhaustiveconcor1890stro",
+      "granularity": "verse",
+      "license": {
+        "id": "PublicDomain",
+        "attribution": "James Strong, Strong's Exhaustive Concordance (Abingdon, 1890).",
+        "sourceUrl": "https://archive.org/details/exhaustiveconcor1890stro",
+        "releaseDate": "1970-01-01",
+        "jurisdictions": [],
+        "basis": "Published 1890; Strong d.1894, life+70 expired in 1965, and pre-1931 in the US. Re-derived from the 1890 scan. The Open Scriptures Strong's data file is GPL-3.0 and is deliberately NOT used; the ABS KJV Concordance is separately copyrighted and is also not used."
+      }
+    },
+    {
+      "id": "THAYER",
+      "type": "lexicon",
+      "name": "Thayer's Greek-English Lexicon (1889)",
+      "shortName": "Thayer",
+      "language": "en",
+      "version": "1.0.0",
+      "publisher": "Harper & Brothers",
+      "sha256": "PLACEHOLDER_THAYER",
+      "sizeBytes": 0,
+      "downloadUrl": "https://archive.org/details/greekenglishlexi00grimuoft",
+      "granularity": "verse",
+      "license": {
+        "id": "PublicDomain",
+        "attribution": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (Harper, 1889).",
+        "sourceUrl": "https://archive.org/details/greekenglishlexi00grimuoft",
+        "releaseDate": "1970-01-01",
+        "jurisdictions": [],
+        "basis": "Title page reads copyright 1886/1889; well inside the PD window for both the US and life+70 Spain. The abridged edition published by Larry Pierce is separately copyrighted and is not used."
+      }
+    },
+    {
+      "id": "BDB",
+      "type": "lexicon",
+      "name": "Brown-Driver-Briggs Hebrew Lexicon (1906)",
+      "shortName": "BDB",
+      "language": "en",
+      "version": "1.0.0",
+      "publisher": "Clarendon Press",
+      "sha256": "PLACEHOLDER_BDB",
+      "sizeBytes": 0,
+      "downloadUrl": "https://archive.org/",
+      "granularity": "verse",
+      "license": {
+        "id": "PublicDomain",
+        "attribution": "Francis Brown, S. R. Driver and Samuel Rolles Briggs, A Hebrew and English Lexicon of the Old Testament (Clarendon, 1906).",
+        "sourceUrl": "https://archive.org/",
+        "releaseDate": "1970-01-01",
+        "jurisdictions": [],
+        "basis": "Published 1906; pre-1931 in the US and all authors long deceased. The abridged edition published by Larry Pierce is separately copyrighted and is not used."
+      }
+    },
+    {
+      "id": "NAVE",
+      "type": "dictionary",
+      "name": "Nave's Topical Bible (1896)",
+      "shortName": "Nave",
+      "language": "en",
+      "version": "1.0.0",
+      "publisher": "CrossWire Bible Society",
+      "sha256": "PLACEHOLDER_NAVE",
+      "sizeBytes": 0,
+      "downloadUrl": "https://raw.githubusercontent.com/yojananyosef/aletheia-catalog/v1.3.0/dist/NAVE.amod",
+      "granularity": "verse",
+      "license": {
+        "id": "PublicDomain",
+        "attribution": "John Henry Nave, Topical Bible (1896).",
+        "sourceUrl": "https://crosswire.org/sword/modules/ModInfo.jsp?modName=NAVE",
+        "releaseDate": "1970-01-01",
+        "jurisdictions": [],
+        "basis": "Original copyrights 1896 and 1897; public domain by age."
+      }
+    },
+    {
+      "id": "TSK",
+      "type": "crossref",
+      "name": "Treasury of Scripture Knowledge (c.1830)",
+      "shortName": "TSK",
+      "language": "en",
+      "version": "1.0.0",
+      "publisher": "CrossWire Bible Society",
+      "sha256": "PLACEHOLDER_TSK",
+      "sizeBytes": 0,
+      "downloadUrl": "https://raw.githubusercontent.com/yojananyosef/aletheia-catalog/v1.3.0/dist/TSK.amod",
+      "granularity": "verse",
+      "license": {
+        "id": "PublicDomain",
+        "attribution": "Treasury of Scripture Knowledge (compiled c.1830).",
+        "sourceUrl": "https://crosswire.org/sword/modules/ModInfo.jsp?modName=TSK",
+        "releaseDate": "1970-01-01",
+        "jurisdictions": [],
+        "basis": "Compiled around 1830, public domain by age. The bare 1830 text is used; online editions that append Nelson's illustrated notes are separately copyrighted and are not used."
+      }
+    },
+    {
+      "id": "WLC",
+      "type": "bible",
+      "name": "Westminster Leningrad Codex",
+      "shortName": "WLC",
+      "language": "hbo",
+      "direction": "rtl",
+      "version": "1.0.0",
+      "publisher": "eBible.org",
+      "sha256": "PLACEHOLDER_WLC",
+      "sizeBytes": 0,
+      "downloadUrl": "https://ebible.org/find/details.php?id=hboWLC",
+      "granularity": "verse",
+      "license": {
+        "id": "PublicDomain",
+        "attribution": "Westminster Leningrad Codex (1904/1908 base).",
+        "sourceUrl": "https://ebible.org/hboWLC/copyright.htm",
+        "releaseDate": "1970-01-01",
+        "jurisdictions": [],
+        "basis": "The Masoretic text is ancient; the 1904/1908 editions are public domain by age. The text is PD; only downstream tagging carries a licence."
+      }
+    },
+    {
+      "id": "SBLGNT",
+      "type": "bible",
+      "name": "SBL Greek New Testament (2010)",
+      "shortName": "SBLGNT",
+      "language": "grc",
+      "version": "1.0.0",
+      "publisher": "Society of Biblical Literature / Logos Bible Software",
+      "sha256": "PLACEHOLDER_SBLGNT",
+      "sizeBytes": 0,
+      "downloadUrl": "https://sblgnt.com/",
+      "granularity": "verse",
+      "license": {
+        "id": "CC-BY",
+        "attribution": "SBL Greek New Testament (2010). Copyright (c) Society of Biblical Literature and Logos Bible Software. Licensed CC BY 4.0. Text of this resource is available at https://sblgnt.com/ under a Creative Commons Attribution 4.0 License.",
+        "sourceUrl": "https://sblgnt.com/license/",
+        "releaseDate": "1970-01-01",
+        "jurisdictions": [],
+        "basis": "CC BY 4.0 permits commercial redistribution with attribution. The required attribution string is carried in the manifest and surfaced in the application's credits screen."
+      }
+    },
+    {
+      "id": "OSHB",
+      "type": "words",
+      "name": "Open Scriptures Hebrew Bible — morphology",
+      "shortName": "OSHB",
+      "language": "hbo",
+      "direction": "rtl",
+      "version": "1.0.0",
+      "publisher": "Open Scriptures Hebrew Bible Project",
+      "sha256": "PLACEHOLDER_OSHB",
+      "sizeBytes": 0,
+      "downloadUrl": "https://github.com/openscriptures/morphhb",
+      "granularity": "verse",
+      "license": {
+        "id": "CC-BY",
+        "attribution": "Original work of the Open Scriptures Hebrew Bible Project available at https://github.com/openscriptures/morphhb",
+        "sourceUrl": "https://github.com/openscriptures/morphhb/blob/master/LICENSE.md",
+        "releaseDate": "1970-01-01",
+        "jurisdictions": [],
+        "basis": "Lemma and morphology data licensed CC BY 4.0, attribution required. The underlying Westminster Leningrad Codex text is public domain. Robinson's morphological codes are deliberately NOT used: the CrossWire file is CC BY-SA and its share-alike obligation would taint every derived catalog."
+      }
+    },
+    {
+      "id": "PLATENSE",
+      "type": "bible",
+      "name": "Biblia Platense (Straubinger, 1948)",
+      "shortName": "Platense",
+      "language": "es",
+      "version": "1.0.0",
+      "publisher": "Juan Straubinger",
+      "sha256": "PLACEHOLDER_PLATENSE",
+      "sizeBytes": 0,
+      "downloadUrl": "https://www.stepbible.org/version.jsp?version=SpaPlatense",
+      "granularity": "verse",
+      "license": {
+        "id": "PublicDomain",
+        "attribution": "Biblia Platense (Straubinger), La Plata, 1948. Public domain in Chile, Spain and the EU from 2027-01-01.",
+        "sourceUrl": "https://www.stepbible.org/version.jsp?version=SpaPlatense",
+        "releaseDate": "2027-01-01",
+        "jurisdictions": ["CL", "ES", "EU"],
+        "basis": "Juan Straubinger (1883-1956). Life+70 under Ley 17.336 art. 10 (Chile), Spain and the EU expires 2026-12-31, so the work enters the public domain on 2027-01-01. NOT public domain in the United States, where the 95-years-from-publication rule for works of 1931-1977 runs to 2043. Open question: Straubinger consulted Nácar-Colunga (1944) and Bóver-Cantera (1947); the stated base text is the Masoretic text, but verbatim borrowing would pull in rights lasting to 2031 (Prado) and 2053 (Cantera). Textual verification is required before distribution."
+      }
+    },
+    {
+      "id": "RV1865",
+      "type": "bible",
+      "name": "Reina-Valera 1865",
+      "shortName": "RV1865",
+      "language": "es",
+      "version": "1.0.0",
+      "publisher": "Reina y Valera",
+      "sha256": "PLACEHOLDER_RV1865",
+      "sizeBytes": 0,
+      "downloadUrl": "https://www.stepbible.org/version.jsp?version=SpaRV1865",
+      "granularity": "verse",
+      "license": {
+        "id": "PublicDomain",
+        "attribution": "Reina-Valera 1865.",
+        "sourceUrl": "https://www.stepbible.org/version.jsp?version=SpaRV1865",
+        "releaseDate": "1970-01-01",
+        "jurisdictions": [],
+        "basis": "Published 1865; public domain by age in every life+70 jurisdiction."
+      }
+    },
+    {
+      "id": "DRA",
+      "type": "bible",
+      "name": "Douay-Rheims 1899",
+      "shortName": "DRA",
+      "language": "en",
+      "version": "1.0.0",
+      "publisher": "eBible.org",
+      "sha256": "PLACEHOLDER_DRA",
+      "sizeBytes": 0,
+      "downloadUrl": "https://ebible.org/engDRA/",
+      "granularity": "verse",
+      "license": {
+        "id": "PublicDomain",
+        "attribution": "Douay-Rheims Bible (1899).",
+        "sourceUrl": "https://ebible.org/engDRA/copyright.htm",
+        "releaseDate": "1970-01-01",
+        "jurisdictions": [],
+        "basis": "Published 1899; public domain by age. Pairs with the Biblia Platense to cover the Catholic canon, including the deuterocanonicals, in English."
+      }
+    }
+  ],
+  "excluded": [
+    {
+      "id": "RVR60",
+      "reason": "Copyrighted 1960, renewed 1988 by Sociedades Biblicas Unidas, and a registered trademark. The rights holder names mobile applications and websites as requiring written permission. Never distributable without a licence."
+    },
+    {
+      "id": "RCA",
+      "reason": "Robinson's Morphological Analysis Codes as distributed by CrossWire are CC BY-SA 3.0. The share-alike obligation propagates to derived data, which would taint every catalog it entered. The underlying coding scheme is a fact, but the distributed file is a 2002 copyrighted compilation."
+    },
+    {
+      "id": "STRONGS-OPENSCRIPTURES",
+      "reason": "The Open Scriptures Strong's dictionary data file is GPL-3.0 — a copyleft software licence applied to data. Using it in a closed app would arguably trigger GPL obligations. Strong's 1890 is public domain and is re-derived from the archival scan instead."
+    },
+    {
+      "id": "RWP",
+      "reason": "Robertson's Word Pictures volumes 5 and 6 were published in 1932/1933 and renewed in 1960. Under the 95-years-from-publication rule they are not US public domain until 2028 and 2029 respectively."
+    },
+    {
+      "id": "VINE",
+      "reason": "Vine's Expository Dictionary (1940) is genuinely contested: probably public domain by 2026, but with no authoritative statement confirming non-renewal and an unresolved public debate. Excluded pending legal confirmation."
+    },
+    {
+      "id": "SCOFIELD",
+      "reason": "The common modern edition of the Scofield Reference Notes carries substantive 1970s additions by Palmore/Royalston and is copyrighted, despite the 1917 original being old."
+    },
+    {
+      "id": "MHC-ES",
+      "reason": "The Spanish Matthew Henry in circulation is Francisco Lacueva's CLIE translation (1983), a modern copyrighted work. Biblioteca de Autores Cristianos republishes ancient authors in modern copyrighted translations. There is no public-domain Spanish commentary available."
+    },
+    {
+      "id": "STEP-DATASETS",
+      "reason": "Tyndale House STEP Bible publishes its own datasets under CC BY-NC 3.0, which forbids commercial use."
+    },
+    {
+      "id": "LSDJ",
+      "reason": "Liddell & Scott & Jones, 9th edition (1940) is in copyright; the Perseus electronic edition is CC BY-SA."
+    }
+  ]
+}

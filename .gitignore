@@ -1,0 +1,17 @@
+# Dart / Flutter
+.dart_tool/
+.packages
+build/
+pubspec.lock          # library packages: lock is not committed
+
+# Built modules are large binaries. They are published as release artefacts and
+# referenced from catalog.json by sha256 + URL, so the catalog stays reviewable
+# as text even when the payloads are not in git.
+dist/*.amod
+*.amod
+
+# Tooling
+.idea/
+.vscode/
+*.iml
+.DS_Store

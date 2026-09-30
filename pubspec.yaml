@@ -1,0 +1,20 @@
+name: logos_catalogs
+description: >-
+  Content catalogs for the Logos engine: the AMF format contract, the licensing gate
+  that decides what may ship, and the tooling that builds and validates modules.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+
+dependencies:
+  amf_format:
+    path: format
+
+dev_dependencies:
+  test: ^1.25.0
+  lints: ^4.0.0
+  sqlite3: ^2.4.0
+  archive: ^3.6.0
+  crypto: ^3.0.3
