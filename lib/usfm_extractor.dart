@@ -19,15 +19,22 @@ class UsfmExtractor {
     final verses = <UsfmVerse>[];
     var chapter = 0;
     var verse = 0;
+    int? verseEnd;
     final buffer = StringBuffer();
 
     void flush() {
       if (chapter == 0 || verse == 0) return;
       final text = _normalise(buffer.toString());
       if (text.isNotEmpty) {
-        verses.add(UsfmVerse(chapter: chapter, verse: verse, text: text));
+        verses.add(UsfmVerse(
+          chapter: chapter,
+          verse: verse,
+          verseEnd: verseEnd,
+          text: text,
+        ));
       }
       buffer.clear();
+      verseEnd = null;
     }
 
     for (final rawLine in usfm.split('\n')) {
@@ -55,11 +62,19 @@ class UsfmExtractor {
         final match = RegExp(r'^(\d+)').firstMatch(spec);
         if (match != null) {
           verse = int.tryParse(match.group(1)!) ?? verse;
-          // Drop the rest of a range or list spec (`-3`, `,5`) before taking text.
-          final inline = spec
-              .substring(match.end)
-              .replaceFirst(RegExp(r'^[\d\s,\-]+'), '')
-              .trim();
+
+          // A range `35-36` is one run of text covering both verses, so the last number
+          // in the spec is where the entry ends. Recorded rather than dropped.
+          final numbers = RegExp(r'\d+')
+              .allMatches(spec)
+              .map((m) => int.tryParse(m.group(0)!) ?? 0)
+              .toList();
+          final last = numbers.isEmpty ? verse : numbers.last;
+          verseEnd = last > verse ? last : null;
+
+          // Drop the range spec before taking text.
+          final inline =
+              spec.substring(match.end).replaceFirst(RegExp(r'^[\d\s,\-]+'), '').trim();
           if (inline.isNotEmpty) _append(buffer, inline);
         }
         continue;
@@ -102,17 +117,36 @@ class UsfmExtractor {
     // Removing a marker leaves a space where it stood, which can land before
     // punctuation: "Word \add*," would otherwise become "Word ,".
     s = s.replaceAllMapped(
-        RegExp(r'\s+([,.;:!?])'),
-        (m) => m.group(1)!,
-      );
+      RegExp(r'\s+([,.;:!?])'),
+      (m) => m.group(1)!,
+    );
     return s.trim();
   }
 }
 
 class UsfmVerse {
-  const UsfmVerse({required this.chapter, required this.verse, required this.text});
+  const UsfmVerse({
+    required this.chapter,
+    required this.verse,
+    required this.text,
+    this.verseEnd,
+  });
 
   final int chapter;
   final int verse;
   final String text;
+
+  /// Last verse this entry covers, when the source spanned several.
+  ///
+  /// USFM writes a range as one marker with one run of text: `\\v 35-36` followed by
+  /// the words of both verses. Taking only the first number and discarding the rest puts
+  /// 17:36's text under 17:35 with no record that it was ever spoken for, so a lookup of
+  /// the second verse finds nothing while its words sit one line above.
+  ///
+  /// This is not hypothetical: the upstream WEB module has exactly this in Luke 17,
+  /// Acts 8, Acts 15 and Acts 24, and leaves `verseEnd` NULL. Recording the span is what
+  /// makes the addressing honest; the reader then has to honour it too.
+  final int? verseEnd;
+
+  bool get spansVerses => verseEnd != null && verseEnd! > verse;
 }

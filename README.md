@@ -60,16 +60,25 @@ catalog/         catalog.json — the index, reviewable as text
 ## The integrity check
 
 `ModuleIntegrityGate` verifies that every chapter is contiguous `1..N` with no duplicates
-and no gaps.
+and no gaps. It exists because the upstream catalog had no such check.
 
-This exists because the upstream catalog had no such check. Its end-to-end test read
-**Genesis 1:1** — an Old Testament verse, unaffected — while a systematic New Testament
-defect shipped: 260 chapters with no verse 1, **including John 1:1**, in both the ASV and
-KJV modules. The cause was an off-by-one in the SWORD RawText reader, and
-`lib/usfm_extractor.dart` is the corrected replacement, with that defect pinned by
-`test/usfm_extractor_test.dart`.
+Reading the artefacts found **two** distinct defects, not one:
 
-Reading one working book while another is broken is exactly the gap this closes.
+**Lost first verse — KJV and ASV, 260 chapters each.** `John 1:1` returns zero rows. The
+cause was an off-by-one in the SWORD RawText reader, which indexed a chapter's lines as
+`lines[verse - 1]` when verse N lives at `lines[N]`. The upstream end-to-end test read
+**Genesis 1:1** — Old Testament, unaffected — and passed.
+
+**Merged verses, `verseEnd` never populated — WEB, 4 chapters.** `Luke 17:36` and three
+others return zero rows, but the text is *present*: USFM writes several verses as one run
+under a range marker, and the ETL stored that run under the first verse number alone. Every
+chapter still starts at verse 1, so checking only for that reports WEB as sound — an earlier
+note here called it "clean (0 missing)", which was wrong.
+
+`lib/usfm_extractor.dart` fixes both: it keeps the first verse of every chapter and now
+records `verseEnd` from the range marker instead of discarding the tail. Both defects are
+pinned by `test/usfm_extractor_test.dart`, and the engine's reader is taught to honour
+`verseEnd` so a rebuilt module actually resolves.
 
 ## Adding a resource
 

@@ -132,8 +132,7 @@ AmfResourceEntry _entry(Map<String, dynamic> m) {
       attribution: lic['attribution'] as String? ?? '',
       sourceUrl: lic['sourceUrl'] as String? ?? '',
       releaseDate:
-          DateTime.tryParse(lic['releaseDate'] as String? ?? '') ??
-              DateTime.utc(1970),
+          DateTime.tryParse(lic['releaseDate'] as String? ?? '') ?? DateTime.utc(1970),
       jurisdictions: jurisdictions,
       basis: lic['basis'] as String?,
     ),

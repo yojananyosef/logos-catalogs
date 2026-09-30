@@ -35,8 +35,7 @@ And Naomi had a kinsman in Bethlehem whose name was Boaz.
 ''';
 
       final verses = extractor.extract(usfm);
-      final chapterOnes =
-          verses.where((v) => v.verse == 1).map((v) => v.chapter).toSet();
+      final chapterOnes = verses.where((v) => v.verse == 1).map((v) => v.chapter).toSet();
       expect(chapterOnes, {1, 2});
     });
 
@@ -85,7 +84,8 @@ And God saw the light, that it was good.
 with God.
 ''';
       final verses = extractor.extract(usfm);
-      expect(verses.single.text, 'In the beginning was the Word, and the Word was with God.');
+      expect(verses.single.text,
+          'In the beginning was the Word, and the Word was with God.');
     });
 
     test('ignores non-verse markers', () {
@@ -101,14 +101,44 @@ with God.
       expect(verses.single.text, 'In the beginning God created heaven and earth.');
     });
 
-    test('handles verse ranges and lists by taking the first number', () {
+    test('records the end of a verse range rather than discarding it', () {
+      // The upstream defect, in miniature. `\v 35-36` carries one run of text for both
+      // verses; keeping only 35 hides 17:36's words under 17:35, so a lookup of 36 finds
+      // nothing while its text is visible one line above. WEB has this in four chapters.
       const usfm = r'''
-\c 1
-\v 1-3 Alpha beta gamma.
-\v 4,5 Delta epsilon.
+\c 17
+\v 35-36 Two will be taken; one will be left.
+\v 37 Where, Lord?
 ''';
       final verses = extractor.extract(usfm);
-      expect(verses.map((v) => v.verse), [1, 4]);
+
+      expect(verses.first.verse, 35);
+      expect(verses.first.verseEnd, 36);
+      expect(verses.first.spansVerses, isTrue);
+      expect(verses.first.text, contains('one will be left'));
+      expect(verses[1].verse, 37);
+      expect(verses[1].verseEnd, isNull, reason: 'a single verse has no end');
+    });
+
+    test('a list is treated as a span up to its last number', () {
+      const usfm = r'''
+\c 1
+\v 1,2,3 Alpha beta gamma.
+''';
+      final verses = extractor.extract(usfm);
+      expect(verses.single.verse, 1);
+      expect(verses.single.verseEnd, 3);
+    });
+
+    test('a single verse number leaves no end', () {
+      const usfm = r'''
+\c 1
+\v 5 Just this one.
+''';
+      final verses = extractor.extract(usfm);
+      expect(verses.single.verse, 5);
+      expect(verses.single.verseEnd, isNull);
+      expect(verses.single.spansVerses, isFalse);
     });
   });
 }
