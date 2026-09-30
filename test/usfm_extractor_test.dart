@@ -140,5 +140,34 @@ with God.
       expect(verses.single.verseEnd, isNull);
       expect(verses.single.spansVerses, isFalse);
     });
+
+    test('Strong\'s numbers in the verse text are not read as a span', () {
+      // Every real archive is annotated; every fixture here was not. Scanning the whole
+      // line for digits turned `strong="H8034"` into verseEnd 8034 and made 2 Samuel 23
+      // fail the module's integrity check for a reason that had nothing to do with it.
+      const usfm = r'''
+\c 23
+\v 8 These \add be\add* the \w names|strong="H8034"\w* of the mighty \w men|strong="H1121"\w*
+\v 9 And \w after|strong="H0310"\w* him was \w Eleazar|strong="H0499"\w*
+''';
+      final verses = extractor.extract(usfm);
+
+      expect(verses.map((v) => v.verse), [8, 9]);
+      expect(verses.map((v) => v.verseEnd), everyElement(isNull));
+      // Attributes are not the extractor's concern: `build_module.dart` strips
+      // `|strong="..."` before extraction. What matters here is that the verse text
+      // survives intact.
+      expect(verses.first.text, contains('mighty'));
+    });
+
+    test('a real range is still recorded when the text is annotated', () {
+      const usfm = r'''
+\c 17
+\v 35-36 And \w one|strong="H1520"\w* of \w them|strong="H3588"\w*
+''';
+      final verses = extractor.extract(usfm);
+      expect(verses.single.verse, 35);
+      expect(verses.single.verseEnd, 36);
+    });
   });
 }

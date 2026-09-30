@@ -59,22 +59,28 @@ class UsfmExtractor {
         final spec = line.substring(3).trim();
         // Handles ranges and lists: `\v 1-3`, `\v 1,2,3` take the first number, and
         // whatever follows the number on the same line is this verse's text.
-        final match = RegExp(r'^(\d+)').firstMatch(spec);
-        if (match != null) {
-          verse = int.tryParse(match.group(1)!) ?? verse;
+        //
+        // Only the *leading spec* is examined for the span, never the whole line. A
+        // Strong's-tagged source puts numbers all over the verse text —
+        // `\v 8 ... \w men|strong="H8034"\w*` — and reading every digit on the line made
+        // the last one the verse's end, so each annotated verse became a span reaching
+        // verse 8034. Every corpus in the fixtures was unannotated, so nothing caught it;
+        // it appeared the first time a real archive was built.
+        final specMatch = RegExp(r'^(\d+(?:\s*[-,\s]\s*\d+)*)').firstMatch(spec);
+        if (specMatch != null) {
+          final numbers = RegExp(r'\d+')
+              .allMatches(specMatch.group(1)!)
+              .map((m) => int.tryParse(m.group(0)!) ?? 0)
+              .toList();
+          verse = numbers.isEmpty ? verse : numbers.first;
 
           // A range `35-36` is one run of text covering both verses, so the last number
           // in the spec is where the entry ends. Recorded rather than dropped.
-          final numbers = RegExp(r'\d+')
-              .allMatches(spec)
-              .map((m) => int.tryParse(m.group(0)!) ?? 0)
-              .toList();
           final last = numbers.isEmpty ? verse : numbers.last;
           verseEnd = last > verse ? last : null;
 
           // Drop the range spec before taking text.
-          final inline =
-              spec.substring(match.end).replaceFirst(RegExp(r'^[\d\s,\-]+'), '').trim();
+          final inline = spec.substring(specMatch.end).trim();
           if (inline.isNotEmpty) _append(buffer, inline);
         }
         continue;
