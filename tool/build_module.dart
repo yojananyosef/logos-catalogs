@@ -27,6 +27,7 @@ import 'package:archive/archive.dart';
 import 'package:crypto/crypto.dart';
 import 'package:sqlite3/sqlite3.dart';
 
+import '../lib/module_archive.dart';
 import '../lib/usfm_extractor.dart';
 import '../lib/xref_ingest.dart';
 
@@ -261,6 +262,10 @@ class UnreadableCrossReferenceRows implements Exception {
       'line ${rejected.first.line}: ${rejected.first.reason}';
 }
 
+/// The archive is assembled by [AmfArchive], which owns the determinism rule and its
+/// explanation. It used to be inlined here, which meant the only way to check that a build
+/// was reproducible was to produce an eleven-megabyte module and build it twice — so the
+/// rule was, in practice, unchecked. `lib/module_archive.dart` makes it a unit test.
 Future<int> run(List<String> args) async {
   /// The value following `--name`, or null when the flag is absent.
   String? arg(String name) {
@@ -482,11 +487,7 @@ Future<int> run(List<String> args) async {
   final content = work.readAsBytesSync();
   work.deleteSync();
 
-  final zip = ZipEncoder().encode(
-    Archive()
-      ..addFile(ArchiveFile('manifest.json', manifest.length, manifest))
-      ..addFile(ArchiveFile('content.db', content.length, content)),
-  );
+  final zip = AmfArchive.encode(manifest, content);
   // `encode` returns null only when the archive is empty, which cannot happen here: two
   // entries were just added. Guarded rather than asserted so a future optional entry
   // cannot produce a module written as a zero-byte file.

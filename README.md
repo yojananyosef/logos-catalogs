@@ -80,6 +80,39 @@ records `verseEnd` from the range marker instead of discarding the tail. Both de
 pinned by `test/usfm_extractor_test.dart`, and the engine's reader is taught to honour
 `verseEnd` so a rebuilt module actually resolves.
 
+## A module build is byte-reproducible
+
+Two builds of the same source produce the same `sha256`, and that is a property you can
+check rather than a property you have to believe:
+
+```
+dart run tool/build_module.dart --usfm eng-kjv2006_usfm.zip --id KJV \
+  --name "King James Version" --out dist-a
+dart run tool/build_module.dart --usfm eng-kjv2006_usfm.zip --id KJV \
+  --name "King James Version" --out dist-b
+cmp dist-a/KJV.amod dist-b/KJV.amod && echo identical
+```
+
+This was broken until recently, and the reason it matters is not tidiness. `ArchiveFile`
+defaults `lastModTime` to the current wall clock; the assembler now pins it to the DOS epoch
+so the archive is a function of its content alone.
+
+Without that, the `sha256` printed at the end of a build is a value **nobody can check** —
+not by a rebuild, not by a CI double build, not by a user comparing a downloaded module
+against `catalog.json`. It can only be taken on faith. That is how this catalog came to
+declare the digest of a module that was never published (`38a18117…`, 11,054,177 bytes)
+beside a `downloadUrl` serving a different file entirely (`c3b094c6…`, 3,553,961 bytes, the
+old upstream build with no cross-references and 27 chapters missing verse 1). An install
+could not possibly have succeeded.
+
+The rule lives in `lib/module_archive.dart` rather than inline in the CLI, so
+`test/module_archive_test.dart` can assert it without an eleven-megabyte build. It also
+includes a control — an entry stamped with the wall clock — that demonstrates the property
+comes from the pin rather than from the encoder being well behaved.
+
+The KJV digest in `catalog.json` is now `6dbf144e…` (11,054,191 bytes): 66 books, 31,102
+verses, 336,829 cross-references, reproducible from the same command above.
+
 ## Adding a resource
 
 1. Add an entry to `catalog/catalog.json` with a licence, an attribution string when

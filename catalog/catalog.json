@@ -34,8 +34,8 @@
       "language": "en",
       "version": "1.0.0",
       "publisher": "CrossWire Bible Society",
-      "sha256": "38a1811786684c701465244ebdeb38a1b6b45fb40f8de624c7d0a96a8980f830",
-      "sizeBytes": 11054177,
+      "sha256": "6dbf144e462a93ae3fab8d77c9c5a369d034725ad5bcf031a7bf290b7fba7eb9",
+      "sizeBytes": 11054191,
       "downloadUrl": "https://raw.githubusercontent.com/yojananyosef/aletheia-catalog/v1.3.0/dist/KJV.amod",
       "granularity": "verse",
       "license": {
