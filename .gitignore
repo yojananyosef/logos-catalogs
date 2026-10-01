@@ -15,3 +15,8 @@ dist/*.amod
 .vscode/
 *.iml
 .DS_Store
+
+# Third-party test data. 4.9 MB of CC BY 4.0 cross-references, fetched rather than
+# committed for the same reason the modules are: it is a payload, not source. The test
+# names the URL and the licence in its skip reason.
+test/fixtures/crossreferences_kjv.tsv

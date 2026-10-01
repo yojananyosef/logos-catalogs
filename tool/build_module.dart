@@ -11,7 +11,12 @@
 //     dart run tool/build_module.dart \
 //       --usfm eng-kjv2006_usfm.zip \
 //       --id KJV --name "King James Version" --language en \
-//       --out dist/
+//       --out dist/ \
+//       --xrefs ../bible-cross-references/tsv/crossreferences_kjv.tsv
+//
+// `--xrefs` is optional: most translations have no cross-reference set of their own. When
+// one is given, a row the parser cannot read stops the build rather than being dropped —
+// see `_writeCrossReferences`.
 //
 // Prints the module's sha256, which is what `catalog.json` needs to become real instead
 // of a placeholder.
@@ -23,6 +28,7 @@ import 'package:crypto/crypto.dart';
 import 'package:sqlite3/sqlite3.dart';
 
 import '../lib/usfm_extractor.dart';
+import '../lib/xref_ingest.dart';
 
 /// The canonical OSIS identifier, testament and order for each of the 66 books.
 ///
@@ -145,6 +151,116 @@ String _prepare(String usfm) => usfm
     .replaceAll('¶', ' ')
     .replaceAll(' ', ' ');
 
+/// Writes the `crossReferences` rows from a TSK export.
+///
+/// Returns the number of rows written, or null when no file was given — which is the
+/// normal case, since most translations have no cross-reference set of their own.
+///
+/// Every reference whose *source* verse the module does not contain is dropped, and so is
+/// every *target* that names a book the module lacks. Both are counted, and a non-zero
+/// count is reported rather than logged quietly: dropping a reference because the module
+/// was built from a partial source is correct, dropping four hundred of them because a
+/// version prefix was read as a book is a bug, and only the number tells the two apart.
+///
+/// Rows whose anchor is not present in the source verse's text are *kept*. The reader
+/// falls back to placing the reference at the end of the verse, which is worse than placing
+/// it exactly but still lets the reader follow it; discarding it would lose a real link
+/// because of a wording difference between two editions of the same translation.
+Future<int?> _writeCrossReferences(
+  Database db,
+  Map<String, int> bookIds,
+  String? path,
+) async {
+  if (path == null) return null;
+
+  final file = File(path);
+  if (!file.existsSync()) {
+    throw CrossReferenceFileMissing(path);
+  }
+
+  final parsed = parseXrefs(await file.readAsString());
+  if (!parsed.isClean) {
+    // Stopped rather than warned: a rejected row is a reference the reader will never show,
+    // and shipping a module that quietly has fewer references than its source is the exact
+    // failure this repository keeps finding in others.
+    throw UnreadableCrossReferenceRows(parsed.rejected);
+  }
+
+  // Which passages the module actually has, so a reference that points nowhere is dropped
+  // rather than written as a link that cannot be followed. Checked at verse granularity for
+  // the source and chapter granularity for the target: a target verse that is merely absent
+  // is a wording difference between versifications, and refusing the whole reference over it
+  // would lose links the reader could have followed.
+  final presentVerses = <String>{};
+  final presentChapters = <String>{};
+  for (final row in db.select('SELECT bookId, chapter, verse FROM verses')) {
+    presentVerses.add('${row['bookId']}:${row['chapter']}:${row['verse']}');
+    presentChapters.add('${row['bookId']}:${row['chapter']}');
+  }
+
+  final insert = db.prepare(
+    'INSERT INTO crossReferences (fromBookId, fromChapter, fromVerse, toBookId, '
+    'toChapter, toVerse, toVerseEnd, anchor, sortOrder) VALUES (?,?,?,?,?,?,?,?,?)',
+  );
+  final sortOrder = <String, int>{};
+
+  var written = 0;
+  var dropped = 0;
+
+  for (final ref in parsed.references) {
+    final fromId = bookIds[ref.fromBook];
+    if (fromId == null ||
+        !presentVerses.contains('${fromId}:${ref.fromChapter}:${ref.fromVerse}')) {
+      dropped++;
+      continue;
+    }
+    for (final target in ref.targets) {
+      final toId = bookIds[target.book];
+      if (toId == null || !presentChapters.contains('$toId:${target.chapter}')) {
+        dropped++;
+        continue;
+      }
+      // Two targets under one phrase share a sortOrder block so the reader renders them in
+      // the order the source listed them, next to each other.
+      final key = '$fromId:${ref.fromChapter}:${ref.fromVerse}:${ref.anchor}';
+      final next = (sortOrder[key] ?? -1) + 1;
+      sortOrder[key] = next;
+      insert.execute([
+        fromId,
+        ref.fromChapter,
+        ref.fromVerse,
+        toId,
+        target.chapter,
+        target.verse,
+        target.verseEnd,
+        ref.anchor,
+        next,
+      ]);
+      written++;
+    }
+  }
+
+  stdout.writeln('cross-references: $written written'
+      '${dropped == 0 ? '' : ', $dropped dropped (the module has no such passage)'}');
+  return written;
+}
+
+/// The `--xrefs` file was named but is not there.
+class CrossReferenceFileMissing implements Exception {
+  CrossReferenceFileMissing(this.path);
+  final String path;
+  String get message => 'cross-reference file not found: $path';
+}
+
+/// The `--xrefs` file has rows this parser cannot read.
+class UnreadableCrossReferenceRows implements Exception {
+  UnreadableCrossReferenceRows(this.rejected);
+  final List<RejectedXrefRow> rejected;
+  String get message =>
+      'cross-reference file has ${rejected.length} unreadable rows. The first is '
+      'line ${rejected.first.line}: ${rejected.first.reason}';
+}
+
 Future<int> run(List<String> args) async {
   /// The value following `--name`, or null when the flag is absent.
   String? arg(String name) {
@@ -162,6 +278,9 @@ Future<int> run(List<String> args) async {
   final license = arg('license') ?? 'PublicDomain';
   final source = arg('source') ?? '';
   final attribution = arg('attribution') ?? '';
+
+  /// The TSK cross-reference export to fold in, or null for a translation with none.
+  final xrefFile = arg('xrefs');
 
   if (usfm == null || id == null || name == null) {
     stderr.writeln('usage: build_module --usfm <zip> --id <ID> --name <NAME> '
@@ -254,6 +373,23 @@ Future<int> run(List<String> args) async {
       INSERT INTO verses_fts(rowid, text, bookId, chapter, verse, verseEnd)
       VALUES (new.rowid, new.text, new.bookId, new.chapter, new.verse, new.verseEnd);
     END''',
+    // The DDL is byte-for-byte what the engine's `CrossReferenceSchema.create` declares.
+    // The two repositories cannot share a Dart file — this one has no dependency on the
+    // application — so the duplication is real and the engine is where it is checked:
+    // `real_modules_test.dart` reads this table out of a module this tool built.
+    '''CREATE TABLE IF NOT EXISTS crossReferences (
+      fromBookId INTEGER NOT NULL,
+      fromChapter INTEGER NOT NULL,
+      fromVerse INTEGER NOT NULL,
+      toBookId INTEGER NOT NULL,
+      toChapter INTEGER NOT NULL,
+      toVerse INTEGER NOT NULL,
+      toVerseEnd INTEGER,
+      anchor TEXT NOT NULL,
+      sortOrder INTEGER NOT NULL
+    )''',
+    '''CREATE INDEX IF NOT EXISTS crossReferences_from ON
+      crossReferences (fromBookId, fromChapter, fromVerse)''',
   ]);
 
   final insertBook = db.prepare(
@@ -265,8 +401,10 @@ Future<int> run(List<String> args) async {
   );
 
   var bookId = 0;
+  final bookIds = <String, int>{};
   for (final b in books) {
     bookId++;
+    bookIds[b.osis] = bookId;
     insertBook.execute([
       bookId,
       b.osis,
@@ -287,6 +425,38 @@ Future<int> run(List<String> args) async {
   // own consistent state before the file is closed. Without this the module opens and
   // searches an index that is missing rows the tables contain.
   exec(['INSERT INTO verses_fts(verses_fts) VALUES (\'optimize\')']);
+
+  // Every module gets the table; only a module that was given a cross-reference file has
+  // anything in it. The flag records the latter, so a reader can tell "this translation
+  // ships no cross-references" from "the reader cannot show them".
+  final features = <String, bool>{
+    'hasStrongs': false,
+    'hasMorphology': false,
+    'hasFootnotes': false,
+    'hasHeadings': false,
+    'hasCrossReferences': false,
+  };
+
+  final int? xrefs;
+  try {
+    xrefs = await _writeCrossReferences(db, bookIds, xrefFile);
+  } on CrossReferenceFileMissing catch (e) {
+    // Named but absent. Reported before the module is finished, because a module written
+    // without its cross-references would look complete and be published.
+    stderr.writeln(e.message);
+    db.dispose();
+    work.deleteSync();
+    return 66;
+  } on UnreadableCrossReferenceRows catch (e) {
+    stderr.writeln(e.message);
+    db.dispose();
+    work.deleteSync();
+    return 65;
+  }
+  if (xrefs != null && xrefs > 0) {
+    features['hasCrossReferences'] = true;
+  }
+
   db.dispose();
 
   final manifest = utf8.encode(jsonEncode({
@@ -305,12 +475,7 @@ Future<int> run(List<String> args) async {
     'copyright': attribution,
     'source': source,
     'attribution': attribution,
-    'features': {
-      'hasStrongs': false,
-      'hasMorphology': false,
-      'hasFootnotes': false,
-      'hasHeadings': false,
-    },
+    'features': features,
     'dependencies': <String>[],
   }));
 
